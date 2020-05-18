@@ -1,10 +1,12 @@
 from PIL import Image, ImageDraw
 import time
+import zoom_levels, mandelbrot_setup
 
 t0 = time.time()
 
 MAX_ITER = 100
 
+zoom_level, file_name = mandelbrot_setup.userInput()
 
 def mandelbrot(c):
     z = 0
@@ -16,14 +18,17 @@ def mandelbrot(c):
 
 
 # Image size (pixels) // Pixel size of the picture
-WIDTH = 1200
+WIDTH = 800
 HEIGHT = 800
 
 n = 1
 
 # Plot window // Adjust this for panning and zooming // Imaginary and Real parts
-x_min, x_max = -2.0 / n, 1.0 / n
-y_min, y_max = -1.5 / n, 1.5 / n
+# Below is the 'Size' of the coordinate system, decreasing theese will zoom into the coordinatesystem
+x_min = zoom_levels.zoom_list[zoom_level]["x_min"]
+x_max = zoom_levels.zoom_list[zoom_level]["x_max"]
+y_min = zoom_levels.zoom_list[zoom_level]["y_min"]
+y_max = zoom_levels.zoom_list[zoom_level]["y_max"]
 
 image = Image.new('HSV', (WIDTH, HEIGHT), (0, 0, 0))
 draw = ImageDraw.Draw(image)
@@ -46,7 +51,7 @@ for x in range(WIDTH):
         # Plot the point
         draw.point([x, y], (hue, saturation, value))
 
-image.convert('RGB').save('10_output_test.png', 'PNG')
+image.convert('RGB').save(file_name + '_iterative.png', 'PNG')
 
 t1 = time.time()
 print("Time: " + str(t1 - t0)[:4])
