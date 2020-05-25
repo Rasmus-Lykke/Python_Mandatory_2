@@ -3,14 +3,14 @@ import numpy  as np
 from PIL import Image, ImageDraw
 import time
 import zoom_levels
+import collections
 
 
-######################################################################3
-
+width, height = 800, 800 # The size of the image created in pixels
 zoom_level, file_name = mandelbrot_setup.userInput()
 
 def mandelbrot_native(zoom_level):
-    width, height = 800, 800 # The size of the image created in pixels
+    
     max_iter = zoom_levels.zoom_list[zoom_level]["max_iter"]
 
     def mandelbrot(c):
@@ -20,8 +20,6 @@ def mandelbrot_native(zoom_level):
             z = z * z + c
             n += 1
         return n
-
-    n = 1
 
     # Plot window // Adjust this for panning and zooming // Imaginary and Real parts
     # Below is the 'Size' of the coordinate system, decreasing theese will zoom into the coordinatesystem
@@ -56,7 +54,6 @@ def mandelbrot_native(zoom_level):
     
 
 def mandelbrot_numpy(zoom_level):
-    width, height = 800, 800 # The size of the image created in pixels
     max_iter = zoom_levels.zoom_list[zoom_level]["max_iter"] # The number of iterations 
 
     # Below is the 'Size' of the coordinate system, decreasing theese will zoom into the coordinatesystem
@@ -97,8 +94,11 @@ def mandelbrot_numpy(zoom_level):
     M = create_mandelbrot()
 
     image = Image.fromarray(M, "RGB") # Creating the image from the "M"
+    
     rotated_image = _rotate_image(image)
     rotated_image.save(file_name + '_numpy.png', 'PNG') # Saves the image to the current director
+    return rotated_image
+    
 
 
 def mandelbrot_multiprocessing(zoom_level):
@@ -122,9 +122,20 @@ def get_mandelbrot(render_engine):
     image = render_engine(zoom_level)
     image.save(file_name + render_engine.__name__[10:] + ".png", "PNG") # Saves the image to the current directory
 
+times = {}
 
-for re in [mandelbrot_native, mandelbrot_numpy, mandelbrot_multiprocessing]:
+for re in [mandelbrot_native, mandelbrot_numpy]:
     start = time.time()
     get_mandelbrot(re)
     end = time.time()
-    print(f'Time was: {end - start}')
+
+    times[re.__name__] = end - start
+
+def time_statestics():
+    time_difference_sec = times.get(mandelbrot_native.__name__) - times.get(mandelbrot_numpy.__name__)
+    print(time_difference_sec)
+
+time_statestics()
+
+
+

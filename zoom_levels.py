@@ -41,4 +41,4 @@ fifth_level = {
     "max_iter": 1000
 }
 
-zoom_list = [original, first_level, second_level, third_level, fourth_level, fifth_level] # Add the dictionaries tho the zoom_list
+zoom_list = (original, first_level, second_level, third_level, fourth_level, fifth_level) # Add the dictionaries tho the zoom_list tuple
